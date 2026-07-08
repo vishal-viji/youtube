@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import path from "path";
 import { toast } from "react-toastify";
 import { UploadIcon } from "./Icons";
 import UploadVideoModal from "./UploadVideoModal";
@@ -8,6 +7,7 @@ import { upload } from "../utils";
 const UploadVideo = () => {
   const [showModal, setShowModal] = useState(false);
   const [previewVideo, setPreviewVideo] = useState("");
+
   const closeModal = () => setShowModal(false);
 
   const [url, setUrl] = useState("");
@@ -23,15 +23,14 @@ const UploadVideo = () => {
         return toast.error("Sorry, file size should be less than 30MB");
       }
 
-      const url = URL.createObjectURL(file);
-      setPreviewVideo(url);
+      const preview = URL.createObjectURL(file);
+      setPreviewVideo(preview);
       setShowModal(true);
 
       const data = await upload("video", file);
       setUrl(data);
 
-      const ext = path.extname(data);
-      setThumbnail(data.replace(ext, ".jpg"));
+      setThumbnail(data.replace(/\.[^/.]+$/, ".jpg"));
     }
   };
 
@@ -40,6 +39,7 @@ const UploadVideo = () => {
       <label htmlFor="video-upload">
         <UploadIcon />
       </label>
+
       <input
         style={{ display: "none" }}
         id="video-upload"
@@ -47,6 +47,7 @@ const UploadVideo = () => {
         accept="video/*"
         onChange={handleVideoUpload}
       />
+
       {showModal && (
         <UploadVideoModal
           closeModal={closeModal}
